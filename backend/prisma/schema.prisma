@@ -7,3 +7,36 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Driver {
+  id Int @id @default(autoincrement())
+
+  name         String
+  description  String
+  car          String
+  minDistance  Decimal @map("min_distance") @db.Decimal(10, 4)
+  ratePerMeter Decimal @map("rate_per_meter") @db.Decimal(10, 4)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  reviews DriverReview[]
+
+  @@index([id, ratePerMeter])
+  @@map("driver")
+}
+
+model DriverReview {
+  id Int @id @default(autoincrement())
+
+  rating  Int
+  comment String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Driver   Driver @relation(fields: [driverId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  driverId Int    @map("driver_id")
+
+  @@index([driverId])
+  @@map("driver_review")
+}
