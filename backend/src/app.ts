@@ -1,7 +1,8 @@
-import fastify, { FastifyReply } from 'fastify';
-import { z, ZodError } from 'zod';
+import fastify from 'fastify';
+import { z } from 'zod';
 import { driverDb } from './data/driver';
 import { googleMaps } from './data/googleMaps';
+import { badRequestError } from './errors/badRequestError';
 
 export const app = fastify();
 
@@ -49,16 +50,6 @@ const routeSchema = z
     origin: data.origin,
     destination: data.destination,
   }));
-
-const badRequestError = (
-  reply: FastifyReply,
-  error: ZodError
-): FastifyReply => {
-  return reply.status(400).send({
-    error_code: 'INVALID_DATA',
-    error_description: error.errors.map((err) => err.message).join(', '),
-  });
-};
 
 app.post('/ride/estimate', async (req, reply) => {
   const { error, data, success } = routeSchema.safeParse(req.body);
