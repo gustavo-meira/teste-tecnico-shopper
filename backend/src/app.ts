@@ -1,8 +1,7 @@
 import fastify from 'fastify';
 import { z } from 'zod';
-import { driverDb } from './data/driver';
-import { googleMaps } from './data/googleMaps';
 import { badRequestError } from './errors/badRequestError';
+import { rideServices } from './service/ride';
 
 export const app = fastify();
 
@@ -58,23 +57,10 @@ app.post('/ride/estimate', async (req, reply) => {
     return badRequestError(reply, error);
   }
 
-  const googleResponse = await googleMaps.getDirections(
+  const { status, responseData } = await rideServices.estimate(
     data.origin,
     data.destination
   );
 
-  const driversAvailable = await driverDb.getByDistance(
-    googleResponse.routes[0].distanceMeters / 1000
-  );
-
-  const response = {
-    origin: googleResponse.routes[0].legs[0].startLocation,
-    destination: googleResponse.routes[0].legs[0].endLocation,
-    distance: googleResponse.routes[0].distanceMeters,
-    duration: googleResponse.routes[0].duration,
-    options: driversAvailable,
-    routeResponse: googleResponse,
-  };
-
-  return reply.status(200).send(response);
+  return reply.status(status).send(responseData);
 });
