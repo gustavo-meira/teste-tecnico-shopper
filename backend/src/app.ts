@@ -1,7 +1,7 @@
 import fastify, { FastifyReply } from 'fastify';
 import { z, ZodError } from 'zod';
+import { driverDb } from './data/driver';
 import { googleMaps } from './data/googleMaps';
-import { prisma } from './lib/prisma';
 
 export const app = fastify();
 
@@ -72,37 +72,9 @@ app.post('/ride/estimate', async (req, reply) => {
     data.destination
   );
 
-  const driversAvailable = (
-    await prisma.driver.findMany({
-      where: {
-        minKmDistance: {
-          lte: googleResponse.routes[0].distanceMeters / 1000,
-        },
-      },
-      select: {
-        id: true,
-        name: true,
-        description: true,
-        vehicle: true,
-        ratePerKm: true,
-        reviews: {
-          select: {
-            rating: true,
-            comment: true,
-          },
-        },
-      },
-    })
-  ).map((driver) => ({
-    id: driver.id,
-    name: driver.name,
-    description: driver.description,
-    vehicle: driver.vehicle,
-    review: driver.reviews[0],
-    value:
-      Number(driver.ratePerKm.toString()) *
-      (googleResponse.routes[0].distanceMeters / 1000),
-  }));
+  const driversAvailable = await driverDb.getByDistance(
+    googleResponse.routes[0].distanceMeters / 1000
+  );
 
   const response = {
     origin: googleResponse.routes[0].legs[0].startLocation,
