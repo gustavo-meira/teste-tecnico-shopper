@@ -1,7 +1,6 @@
-import axios from 'axios';
 import fastify, { FastifyReply } from 'fastify';
 import { z, ZodError } from 'zod';
-import { env } from './lib/env';
+import { googleMaps } from './data/googleMaps';
 import { prisma } from './lib/prisma';
 
 export const app = fastify();
@@ -68,48 +67,16 @@ app.post('/ride/estimate', async (req, reply) => {
     return badRequestError(reply, error);
   }
 
-  type Location = {
-    latLng: {
-      latitude: number;
-      longitude: number;
-    };
-  };
-
-  const googleResponse = await axios.post<{
-    routes: [
-      {
-        legs: [
-          {
-            startLocation: Location;
-            endLocation: Location;
-          }
-        ];
-        distanceMeters: number;
-        duration: string;
-      }
-    ];
-  }>(
-    'https://routes.googleapis.com/directions/v2:computeRoutes',
-    {
-      origin: { address: data.origin },
-      destination: { address: data.destination },
-      travelMode: 'DRIVE',
-    },
-    {
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Goog-Api-Key': env.GOOGLE_API_KEY,
-        'X-Goog-FieldMask':
-          'routes.duration,routes.distanceMeters,routes.legs.startLocation,routes.legs.endLocation',
-      },
-    }
+  const googleResponse = await googleMaps.getDirections(
+    data.origin,
+    data.destination
   );
 
   const driversAvailable = (
     await prisma.driver.findMany({
       where: {
         minKmDistance: {
-          lte: googleResponse.data.routes[0].distanceMeters / 1000,
+          lte: googleResponse.routes[0].distanceMeters / 1000,
         },
       },
       select: {
@@ -134,26 +101,16 @@ app.post('/ride/estimate', async (req, reply) => {
     review: driver.reviews[0],
     value:
       Number(driver.ratePerKm.toString()) *
-      (googleResponse.data.routes[0].distanceMeters / 1000),
+      (googleResponse.routes[0].distanceMeters / 1000),
   }));
 
   const response = {
-    origin: {
-      latitude:
-        googleResponse.data.routes[0].legs[0].startLocation.latLng.latitude,
-      longitude:
-        googleResponse.data.routes[0].legs[0].startLocation.latLng.longitude,
-    },
-    destination: {
-      latitude:
-        googleResponse.data.routes[0].legs[0].endLocation.latLng.latitude,
-      longitude:
-        googleResponse.data.routes[0].legs[0].endLocation.latLng.longitude,
-    },
-    distance: googleResponse.data.routes[0].distanceMeters,
-    duration: googleResponse.data.routes[0].duration,
+    origin: googleResponse.routes[0].legs[0].startLocation,
+    destination: googleResponse.routes[0].legs[0].endLocation,
+    distance: googleResponse.routes[0].distanceMeters,
+    duration: googleResponse.routes[0].duration,
     options: driversAvailable,
-    routeResponse: googleResponse.data,
+    routeResponse: googleResponse,
   };
 
   return reply.status(200).send(response);
