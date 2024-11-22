@@ -3,9 +3,9 @@ CREATE TABLE "driver" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT NOT NULL,
-    "car" TEXT NOT NULL,
-    "min_distance" DECIMAL(10,4) NOT NULL,
-    "rate_per_meter" DECIMAL(10,4) NOT NULL,
+    "vehicle" TEXT NOT NULL,
+    "min_km_distance" INTEGER NOT NULL,
+    "rate_per_km" DECIMAL(10,2) NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -25,7 +25,7 @@ CREATE TABLE "driver_review" (
 );
 
 -- CreateIndex
-CREATE INDEX "driver_id_rate_per_meter_idx" ON "driver"("id", "rate_per_meter");
+CREATE INDEX "driver_id_rate_per_km_idx" ON "driver"("id", "rate_per_km");
 
 -- CreateIndex
 CREATE INDEX "driver_review_driver_id_idx" ON "driver_review"("driver_id");

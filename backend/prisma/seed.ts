@@ -16,9 +16,9 @@ const seed = async () => {
       id: driver.id,
       name: driver.name,
       description: driver.description,
-      car: driver.car,
-      minDistance: driver.minKmDistance / 1000,
-      ratePerMeter: driver.ratePerKm / 1000,
+      vehicle: driver.vehicle,
+      minKmDistance: driver.minKmDistance,
+      ratePerKm: driver.ratePerKm,
     })),
   });
 

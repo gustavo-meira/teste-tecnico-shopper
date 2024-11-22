@@ -10,18 +10,18 @@ datasource db {
 model Driver {
   id Int @id @default(autoincrement())
 
-  name         String
-  description  String
-  car          String
-  minDistance  Decimal @map("min_distance") @db.Decimal(10, 4)
-  ratePerMeter Decimal @map("rate_per_meter") @db.Decimal(10, 4)
+  name          String
+  description   String
+  vehicle       String
+  minKmDistance Int     @map("min_km_distance")
+  ratePerKm     Decimal @map("rate_per_km") @db.Decimal(10, 2)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   reviews DriverReview[]
 
-  @@index([id, ratePerMeter])
+  @@index([id, ratePerKm])
   @@map("driver")
 }
 
