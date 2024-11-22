@@ -16,7 +16,8 @@
   "description": "",
   "dependencies": {
     "@prisma/client": "^5.22.0",
-    "fastify": "^5.1.0"
+    "fastify": "^5.1.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/node": "^22.9.1",
