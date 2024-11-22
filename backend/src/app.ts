@@ -1,6 +1,6 @@
 import fastify from 'fastify';
-import { rideControllers } from './controllers/ride';
+import { rideRoutes } from './routes/ride';
 
 export const app = fastify();
 
-app.post('/ride/estimate', rideControllers.estimate);
+app.register(rideRoutes, { prefix: '/ride' });
