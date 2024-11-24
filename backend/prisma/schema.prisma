@@ -20,6 +20,7 @@ model Driver {
   updatedAt DateTime @updatedAt
 
   reviews DriverReview[]
+  rides   Ride[]
 
   @@index([id, ratePerKm])
   @@map("driver")
@@ -39,4 +40,25 @@ model DriverReview {
 
   @@index([driverId])
   @@map("driver_review")
+}
+
+model Ride {
+  id Int @id @default(autoincrement())
+
+  customerId  String   @map("customer_id")
+  date        DateTime @default(now())
+  origin      String
+  destination String
+  distance    Int
+  duration    String
+  value       Decimal  @db.Decimal(10, 2)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  driver   Driver @relation(fields: [driverId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  driverId Int    @map("driver_id")
+
+  @@index([id, driverId])
+  @@map("ride")
 }
