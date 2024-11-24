@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import z from 'zod';
-import { badRequestError } from '../../errors/badRequestError';
+import { badRequest } from '../../httpHelpers/errors/badRequest';
 import { rideServices } from '../../service/ride';
 
 const routeSchema = z
@@ -55,13 +55,11 @@ export const estimateController = async (
   const { error, data, success } = routeSchema.safeParse(req.body);
 
   if (!success) {
-    return badRequestError(reply, error);
+    const response = badRequest(error);
+    return reply.status(response.statusCode).send(response.data);
   }
 
-  const { status, responseData } = await rideServices.estimate(
-    data.origin,
-    data.destination
-  );
+  const response = await rideServices.estimate(data.origin, data.destination);
 
-  return reply.status(status).send(responseData);
+  return reply.status(response.statusCode).send(response.data);
 };
