@@ -1,10 +1,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { z } from 'zod';
-import { driverDb } from '../../data/driver';
-import { rideDb } from '../../data/ride';
-import { badRequestError } from '../../errors/badRequestError';
-import { notAcceptableError } from '../../errors/notAcceptableError';
-import { notFoundError } from '../../errors/notFoundError';
+import { httpHelpers } from '../../httpHelpers';
+import { rideServices } from '../../service/ride';
 
 const routeSchema = z
   .object({
@@ -91,30 +88,11 @@ export const rideConfirmController = async (
   const { success, data, error } = routeSchema.safeParse(req.body);
 
   if (!success) {
-    return badRequestError(reply, error);
-  }
-
-  const chosenDriver = await driverDb.getById(data.driver.id);
-
-  if (chosenDriver == null || chosenDriver.name !== data.driver.name) {
-    const response = notFoundError('DRIVER_NOT_FOUND');
+    const response = httpHelpers.errors.badRequest(error);
     return reply.status(response.statusCode).send(response.data);
   }
 
-  if (chosenDriver.minKmDistance > data.distance / 1000) {
-    const response = notAcceptableError('INVALID_DISTANCE');
-    return reply.status(response.statusCode).send(response.data);
-  }
+  const response = await rideServices.confirm(data);
 
-  await rideDb.create({
-    customerId: data.customerId,
-    destination: data.destination,
-    origin: data.origin,
-    distance: data.distance,
-    duration: data.duration,
-    value: data.value,
-    driver: chosenDriver,
-  });
-
-  return reply.status(200).send({ success: true });
+  return reply.status(response.statusCode).send(response.data);
 };
