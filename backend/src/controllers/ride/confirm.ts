@@ -88,7 +88,7 @@ export const rideConfirmController = async (
   const { success, data, error } = routeSchema.safeParse(req.body);
 
   if (!success) {
-    const response = httpHelpers.errors.badRequest(error);
+    const response = httpHelpers.errors.badRequest('INVALID_DATA', error);
     return reply.status(response.statusCode).send(response.data);
   }
 

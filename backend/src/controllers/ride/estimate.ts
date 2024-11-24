@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import z from 'zod';
-import { badRequest } from '../../httpHelpers/errors/badRequest';
+import { httpHelpers } from '../../httpHelpers';
 import { rideServices } from '../../service/ride';
 
 const routeSchema = z
@@ -55,7 +55,7 @@ export const estimateController = async (
   const { error, data, success } = routeSchema.safeParse(req.body);
 
   if (!success) {
-    const response = badRequest(error);
+    const response = httpHelpers.errors.badRequest('INVALID_DATA', error);
     return reply.status(response.statusCode).send(response.data);
   }
 
