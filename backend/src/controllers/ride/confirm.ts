@@ -1,5 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { z } from 'zod';
+import { driverDb } from '../../data/driver';
 import { badRequestError } from '../../errors/badRequestError';
 import { notAcceptableError } from '../../errors/notAcceptableError';
 import { notFoundError } from '../../errors/notFoundError';
@@ -93,14 +94,9 @@ export const rideConfirmController = async (
     return badRequestError(reply, error);
   }
 
-  const chosenDriver = await prisma.driver.findFirst({
-    where: {
-      id: data.driver.id,
-      name: data.driver.name,
-    },
-  });
+  const chosenDriver = await driverDb.getById(data.driver.id);
 
-  if (chosenDriver == null) {
+  if (chosenDriver == null || chosenDriver.name !== data.driver.name) {
     const response = notFoundError('DRIVER_NOT_FOUND');
     return reply.status(response.statusCode).send(response.data);
   }
