@@ -1,10 +1,10 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { z } from 'zod';
 import { driverDb } from '../../data/driver';
+import { rideDb } from '../../data/ride';
 import { badRequestError } from '../../errors/badRequestError';
 import { notAcceptableError } from '../../errors/notAcceptableError';
 import { notFoundError } from '../../errors/notFoundError';
-import { prisma } from '../../lib/prisma';
 
 const routeSchema = z
   .object({
@@ -106,18 +106,14 @@ export const rideConfirmController = async (
     return reply.status(response.statusCode).send(response.data);
   }
 
-  await prisma.ride.create({
-    data: {
-      customerId: data.customerId,
-      destination: data.destination,
-      distance: data.distance,
-      duration: data.duration,
-      origin: data.origin,
-      value: data.value,
-      driver: {
-        connect: chosenDriver,
-      },
-    },
+  await rideDb.create({
+    customerId: data.customerId,
+    destination: data.destination,
+    origin: data.origin,
+    distance: data.distance,
+    duration: data.duration,
+    value: data.value,
+    driver: chosenDriver,
   });
 
   return reply.status(200).send({ success: true });
