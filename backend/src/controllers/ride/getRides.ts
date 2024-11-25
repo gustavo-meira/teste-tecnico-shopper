@@ -1,9 +1,7 @@
-import { Driver } from '@prisma/client';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { z } from 'zod';
-import { driverDb } from '../../data/driver';
-import { rideDb } from '../../data/ride';
 import { httpHelpers } from '../../httpHelpers';
+import { rideServices } from '../../service/ride';
 
 const routeSchema = z
   .object({
@@ -44,40 +42,7 @@ export const getRidesController = async (
     return reply.status(response.statusCode).send(response.data);
   }
 
-  let driver: null | Driver = null;
-
-  if (data.driverId) {
-    driver = await driverDb.getById(data.driverId);
-
-    if (driver == null) {
-      const response = httpHelpers.errors.badRequest('INVALID_DRIVER');
-      return reply.status(response.statusCode).send(response.data);
-    }
-  }
-
-  const rides = await rideDb.getByCustomer(data.customerId, driver?.id);
-
-  if (rides.length === 0) {
-    const response = httpHelpers.errors.notFound('NO_RIDES_FOUND');
-    return reply.status(response.statusCode).send(response.data);
-  }
-
-  const response = httpHelpers.success.ok({
-    customer_id: data.customerId,
-    rides: rides.map((ride) => ({
-      id: ride.id,
-      date: ride.date,
-      origin: ride.origin,
-      destination: ride.destination,
-      distance: ride.distance,
-      duration: ride.duration,
-      driver: {
-        id: ride.driver.id,
-        name: ride.driver.name,
-      },
-      value: ride.value,
-    })),
-  });
+  const response = await rideServices.getRidesByCustomer(data);
 
   return reply.status(response.statusCode).send(response.data);
 };
