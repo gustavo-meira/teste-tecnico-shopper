@@ -3,6 +3,7 @@ import { HttpResponse } from '../httpHelper';
 
 const badRequestErrors = {
   INVALID_DATA: 'INVALID_DATA',
+  INVALID_DRIVER: 'Motorista inválido',
 } as const;
 
 type BadRequestErrorKeys = keyof typeof badRequestErrors;
