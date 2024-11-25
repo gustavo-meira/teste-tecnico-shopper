@@ -2,6 +2,7 @@ import { HttpResponse } from '../httpHelper';
 
 const notFoundErrors = {
   DRIVER_NOT_FOUND: 'Motorista não encontrado',
+  NO_RIDES_FOUND: 'Nenhum registro encontrado',
 } as const;
 
 type NotFoundErrorKeys = keyof typeof notFoundErrors;
