@@ -1,21 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { FormComponents } from '../FormComponents';
-
-const formEstimateRideSchema = z.object({
-  customer_id: z.string(),
-  origin: z.string(),
-  destination: z.string(),
-});
-
-export type FormEstimateRideSchemaInput = z.input<
-  typeof formEstimateRideSchema
->;
-export type FormEstimateRideSchemaOutput = z.output<
-  typeof formEstimateRideSchema
->;
+import {
+  formEstimateRideSchema,
+  FormEstimateRideSchemaInput,
+  FormEstimateRideSchemaOutput,
+} from './schema';
 
 type FormEstimateRideProps = {
   onSubmit: (data: FormEstimateRideSchemaOutput) => void;
