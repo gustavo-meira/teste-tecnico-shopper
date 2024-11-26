@@ -10,8 +10,8 @@ export const estimateRide = async (origin: string, destination: string) => {
   );
 
   return httpHelpers.success.ok({
-    origin: googleResponse.routes[0].legs[0].startLocation,
-    destination: googleResponse.routes[0].legs[0].endLocation,
+    origin: googleResponse.routes[0].legs[0].startLocation.latLng,
+    destination: googleResponse.routes[0].legs[0].endLocation.latLng,
     distance: googleResponse.routes[0].distanceMeters,
     duration: googleResponse.routes[0].duration,
     options: driversAvailable,
