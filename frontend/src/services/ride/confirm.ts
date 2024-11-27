@@ -1,4 +1,5 @@
-import axios from 'axios';
+import { notifyError } from '@/utils/notifyError';
+import axios, { AxiosError } from 'axios';
 
 type ConfirmRideResponse = {
   success: boolean;
@@ -18,9 +19,20 @@ type ConfirmRideArgs = {
 };
 
 export const confirmRide = async (data: ConfirmRideArgs) => {
-  const url = new URL('/ride/confirm', import.meta.env.VITE_BACKEND_URL);
+  try {
+    const url = new URL('/ride/confirm', import.meta.env.VITE_BACKEND_URL);
 
-  const response = await axios.patch<ConfirmRideResponse>(url.toString(), data);
+    const response = await axios.patch<ConfirmRideResponse>(
+      url.toString(),
+      data
+    );
 
-  return response.data;
+    return response.data;
+  } catch (err) {
+    if (err instanceof AxiosError) {
+      notifyError(err);
+    }
+
+    return null;
+  }
 };
