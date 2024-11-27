@@ -1,6 +1,7 @@
 import { Route, Routes } from 'react-router';
 import { Header } from './components/Headers/Header/Header';
 import { EstimateRidePage } from './pages/EstimateRidePage';
+import { HistoryPage } from './pages/HistoryPage';
 
 export const App = () => {
   return (
@@ -13,7 +14,7 @@ export const App = () => {
         />
         <Route
           path="/history"
-          element={<h1>History</h1>}
+          element={<HistoryPage />}
         />
       </Routes>
     </div>
