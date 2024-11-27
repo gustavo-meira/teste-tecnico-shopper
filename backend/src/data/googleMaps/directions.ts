@@ -41,5 +41,9 @@ export const getDirections = async (origin: string, destination: string) => {
     }
   );
 
+  if (!Object.hasOwn(response.data, 'routes')) {
+    return null;
+  }
+
   return response.data;
 };
