@@ -3,6 +3,7 @@ import { HttpResponse } from '../httpHelper';
 const notFoundErrors = {
   DRIVER_NOT_FOUND: 'Motorista não encontrado',
   NO_RIDES_FOUND: 'Nenhum registro encontrado',
+  ROUTE_NOT_FOUND: 'A rota não foi encontrada',
 } as const;
 
 type NotFoundErrorKeys = keyof typeof notFoundErrors;
