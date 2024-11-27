@@ -12,12 +12,12 @@ import {
 import { formatMoney } from '@/lib/formatters';
 import { Driver } from '@/types/driver';
 
-type ListAvailableDriversProps = {
+type TableAvailableDriversProps = {
   drivers: Array<Driver & { value: number }>;
   confirmDriver: (driver: Driver & { value: number }) => void;
 };
 
-export const ListAvailableDrivers = (props: ListAvailableDriversProps) => {
+export const TableAvailableDrivers = (props: TableAvailableDriversProps) => {
   const { drivers, confirmDriver } = props;
 
   return (
