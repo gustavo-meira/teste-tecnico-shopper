@@ -1,16 +1,18 @@
 import { FormEstimateRide } from '@/components/Forms/FormEstimateRide';
 import { FormEstimateRideSchemaOutput } from '@/components/Forms/FormEstimateRide/schema';
-import { ListAvailableDrivers } from '@/components/Lists/ListAvailableDrivers';
 import { MapRide } from '@/components/Maps/MapRide';
+import { TableAvailableDrivers } from '@/components/Tables/TableAvailableDrivers';
 import { rideService } from '@/services/ride';
 import { EstimateRideResponseApi } from '@/services/ride/estimate';
 import { Driver } from '@/types/driver';
 import { useState } from 'react';
+import { useNavigate } from 'react-router';
 
 export const EstimateRidePage = () => {
   const [ride, setRide] = useState<EstimateRideResponseApi | null>(null);
   const [clientRide, setClientRide] =
     useState<FormEstimateRideSchemaOutput | null>(null);
+  const navigate = useNavigate();
 
   const onSubmitForm = async (data: FormEstimateRideSchemaOutput) => {
     const response = await rideService.estimate(data);
@@ -35,7 +37,10 @@ export const EstimateRidePage = () => {
     });
 
     if (response.success) {
-      setRide(null);
+      const historySearchParams = new URLSearchParams();
+      historySearchParams.set('customer_id', clientRide.customer_id);
+
+      navigate('/history' + '?' + historySearchParams.toString());
     }
   };
 
@@ -55,7 +60,7 @@ export const EstimateRidePage = () => {
             />
           </div>
           <div className="row-start-2 col-start-1">
-            <ListAvailableDrivers
+            <TableAvailableDrivers
               drivers={ride.options}
               confirmDriver={confirmDriver}
             />
