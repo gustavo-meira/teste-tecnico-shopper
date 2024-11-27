@@ -36,7 +36,7 @@ export const EstimateRidePage = () => {
       value: driver.value,
     });
 
-    if (response.success) {
+    if (response?.success) {
       const historySearchParams = new URLSearchParams();
       historySearchParams.set('customer_id', clientRide.customer_id);
 
