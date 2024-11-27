@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router';
 
 export const Header = () => {
   return (
@@ -9,13 +10,13 @@ export const Header = () => {
           asChild
           variant="link"
         >
-          <a href="#">Estimativa</a>
+          <Link to="/">Estimativa</Link>
         </Button>
         <Button
           asChild
           variant="link"
         >
-          <a href="#">Histórico</a>
+          <Link to="/history">Histórico</Link>
         </Button>
       </nav>
     </header>
