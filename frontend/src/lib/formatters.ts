@@ -14,3 +14,12 @@ export const formatSecondsInMinutes = (seconds: number) => {
 export const formatMetersInKilometers = (meters: number) => {
   return (meters / 1000).toFixed(2);
 };
+
+export const formatDateIntoDateAndHour = (date: Date) => {
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+
+  const day = date.toLocaleDateString('pt-BR');
+
+  return `${hours}:${minutes} - ${day}`;
+};

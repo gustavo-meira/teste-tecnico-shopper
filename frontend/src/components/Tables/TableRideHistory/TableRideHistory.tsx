@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/table';
 import { useRideHistory } from '@/hooks/useRideHistory';
 import {
+  formatDateIntoDateAndHour,
   formatMetersInKilometers,
   formatMoney,
   formatSecondsInMinutes,
@@ -49,7 +50,7 @@ export const TableRideHistory = (props: TableRideHistoryProps) => {
             {rideHistory.map((history) => (
               <TableRow key={history.id}>
                 <TableCell>
-                  {new Date(history.date).toLocaleDateString('pt-BR')}
+                  {formatDateIntoDateAndHour(new Date(history.date))}
                 </TableCell>
                 <TableCell>{history.origin}</TableCell>
                 <TableCell>{history.destination}</TableCell>
