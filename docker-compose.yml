@@ -1,0 +1,39 @@
+services:
+  database:
+    image: postgres:13.3-alpine
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: 123123
+      POSTGRES_DB: teste-tecnico-shopper
+    ports:
+      - '5432:5432'
+
+  backend:
+    build:
+      context: ./backend
+    container_name: backend
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      - database
+    environment:
+      DATABASE_URL: postgres://admin:123123@database:5432/teste-tecnico-shopper
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY}
+    ports:
+      - '8080:8080'
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: frontend
+    env_file:
+      - .env
+    depends_on:
+      - backend
+    environment:
+      VITE_BACKEND_URL: http://localhost:8080
+      VITE_GOOGLE_API_KEY: ${GOOGLE_API_KEY}
+    ports:
+      - '80:80'
